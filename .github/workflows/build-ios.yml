@@ -1,0 +1,27 @@
+ name: Build VertexTrade IPA
+
+  on:
+    workflow_dispatch:
+
+  jobs:
+    build:
+      runs-on: macos-latest
+
+      steps:
+      - uses: actions/checkout@v4
+
+      - name: Build App
+        run: |
+          xcodebuild -project VertexTrade.xcodeproj -scheme VertexTrade -sdk iphoneos -configuration Release build C
+  ODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
+          mkdir -p Payload
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -name "VertexTrade.app" -type d | head -1)
+          cp -R "$APP" Payload/
+          zip -r VertexTrade.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: VertexTrade-IPA
+          path: VertexTrade.ipa
